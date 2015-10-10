@@ -74,12 +74,19 @@ Let's then import test data inside this table:
 LOAD DATA LOCAL INPATH '/home/bperroud/zefix1_input.tsv' INTO TABLE zefix_notifier_input;
 ```
 
+The format of the file `/home/bperroud/zefix1_input.tsv` is email tab regexp, one per line. 
+For instance:
+```
+email1@daplab.ch	bank
+email2@daplab.ch	foo.*bar
+```
+
 ## Matching Algorithm
 
 We do have two tables, respectively `zefix_sogc` and `zefix_notifier_input`. 
 The idea, for this iteration, is to match the user input with the company name.
 
-In a nutshell, something like `where zefix_sogc.company_name _RLIKE_ zefix_notifier_input.regexp`.
+In a nutshell, something like `where zefix_sogc.company_name RLIKE zefix_notifier_input.regexp`.
 
 Every records from the `zefix_sogc` table (for a given day) must be match against every records 
 from the table `zefix_notifier_input`. Ouch, this looks pretty much like a cross product.
@@ -97,10 +104,10 @@ So, joining the two tables and filtering with a `RLIKE` will give something like
 select company_name, email from zefix1 join zefix1_input where company_name RLIKE regexp;
 ```
 
-## Storing query
+## Storing output
 
 Now we have the query working, we need to send email to the matches. One clean way of doing
-this would be to write a Hive UDF. But the easiest is most likely to store the output
+this would be to write a Hive UDF. But the easiest approach is most likely to store the output
 of the query in the local filesystem, read it and send email via a shell script.
 
 To store the data in the local filesystem, the previous query will be transformed like this:
