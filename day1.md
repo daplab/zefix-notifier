@@ -45,21 +45,21 @@ Now we have the table and at least one partition, we can start querying the tabl
 let's show what the table looks like:
 
 ```
-DESCRIBE zefix1
+DESCRIBE zefix_sogc
 ```
 
 And now run our first query:
 
 ```
-SELECT company_name FROM zefix1 WHERE year = 2015 and month = 08 and day = 28
+SELECT company_name FROM zefix_sogc WHERE year = 2015 and month = 08 and day = 28
 ```
 
 ## User Inputs
 
-The second part of the daily batch is to get match the user inputs with the zefix SOGC table.
+The second part of the daily batch is to match the user inputs with the zefix SOGC table.
 
 Let's take few shortcuts for the time being and create a user input table and manually load data 
-inside. In the next version, we'll use sqoop to extract the data from the mysql data into Hive.
+inside. In the next iteration, we'll use sqoop to extract the data from the mysql database into Hive.
 
 ```
 CREATE TABLE `zefix_notifier_input` (
@@ -79,15 +79,17 @@ LOAD DATA LOCAL INPATH '/home/bperroud/zefix1_input.tsv' INTO TABLE zefix_notifi
 We do have two tables, respectively `zefix_sogc` and `zefix_notifier_input`. 
 The idea, for this iteration, is to match the user input with the company name.
 
-In a nutshell, something like `where zefix_sogc.company_name RLIKE zefix_notifier_input.regexp`.
+In a nutshell, something like `where zefix_sogc.company_name _RLIKE_ zefix_notifier_input.regexp`.
 
 Every records from the `zefix_sogc` table (for a given day) must be match against every records 
 from the table `zefix_notifier_input`. Ouch, this looks pretty much like a cross product.
 Ok, we can live with that for the time being, but we'll raise a flag here and address this
-problem later.
+problem in a future iteration.
 
+<aside class="notice">
 As a side note, running an `EXPLAIN` on the query is actually providing a WARNING that a 
 cross product will be used.
+</aside>
 
 So, joining the two tables and filtering with a `RLIKE` will give something like:
 
