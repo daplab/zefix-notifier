@@ -4,7 +4,7 @@ To run locally:
 
  - [Download](https://www.playframework.com/download) Play with Activator
  - Unzip Play somwhere
- - cd ``path/to/zelfixUI``
+ - cd ``path/to/zefixUI``
  - run play console ``/path/to/play/activator``
  - type *run*
  - go to [http://localhost:9000/](http://localhost:9000/)
