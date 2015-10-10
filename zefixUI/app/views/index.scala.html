@@ -1,0 +1,38 @@
+@(message: String)
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@main("Welcome to Zefix") {
+
+    <div class="row" style="padding-top:30px">
+        <div class="col-md-12">
+             @helper.form(action = routes.Application.getNotified(), 'class -> "form-horizontal", 'role -> "form") {
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="keyword">Keyword to match:</label>
+                    <div class="col-md-4">
+                        <input class="form-control" id="keyword" placeholder="foo.*">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="email">Email:</label>
+                    <div class="col-md-4">
+                        <input type="email" class="form-control" id="email" placeholder="address@@mail.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="callback">Callback:</label>
+                    <div class="col-md-4">
+                        <input class="form-control" id="callback" placeholder="http://some.server/some/endpoint">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-4">
+                        <button type="submit" class="btn btn-primary pull-right">Get Notified</button>
+                    </div>
+                </div>
+             }
+        </div>
+    </div>
+
+}
