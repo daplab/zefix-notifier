@@ -37,6 +37,22 @@ ALTER TABLE zefix_sogc ADD IF NOT EXISTS PARTITION(year = 2015, month = 08, day 
 LOCATION 'hdfs://daplab1/shared/zefix/sogc/2015/08/28/';
 ```
 
+The complete hive SQL for creating the partitions is 
+
+```
+ALTER TABLE zefix_sogc ADD IF NOT EXISTS 
+PARTITION(year = ${hiveconf:year}, month = ${hiveconf:month}, day = ${hiveconf:day}) 
+LOCATION 'hdfs://daplab1/shared/zefix/sogc/${hiveconf:year}/${hiveconf:month}/${hiveconf:day}/';
+```
+
+This script will be called via a crontab after the data is ingested.
+
+In addition, a one-liner one-off script which will backfill the partitions for all the history of data we have:
+
+```
+hdfs dfs -ls /shared/zefix/sogc/*/*/ | grep /shared/zefix/sogc/ | awk '{print $8}' | sed -e "s|/shared/zefix/sogc/||" | while read line; do year=$(echo $line | cut -d "/" -f1); month=$(echo $line | cut -d "/" -f 2); day=$(echo $line | cut -d "/" -f3); echo "$year / $month / $day"; hive -hiveconf year=$year -hiveconf month=$month -hiveconf day=$day -f zefix_sogc_add_partition.hql; done;
+```
+ 
 Please note that there is no data ingested over the week-ends, so there is gap in the dates.
 
 ### First query
@@ -51,7 +67,7 @@ DESCRIBE zefix_sogc
 And now run our first query:
 
 ```
-SELECT company_name FROM zefix_sogc WHERE year = 2015 and month = 08 and day = 28
+SELECT company_name FROM zefix_sogc WHERE year = 2015 and month = 08 and day = 28;
 ```
 
 ## User Inputs
@@ -65,7 +81,7 @@ inside. In the next iteration, we'll use sqoop to extract the data from the mysq
 CREATE TABLE `zefix_notifier_input` (
   `regexp` string,
   `email` string 
-) row format delimited fields terminated by '\t' stored as textfile;;
+) row format delimited fields terminated by '\t' stored as textfile;
 ```
 
 Let's then import test data inside this table:
