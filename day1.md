@@ -55,6 +55,21 @@ hdfs dfs -ls /shared/zefix/sogc/*/*/ | grep /shared/zefix/sogc/ | awk '{print $8
  
 Please note that there is no data ingested over the week-ends, so there is gap in the dates.
 
+Lets show all the created partitions:
+
+```
+show partitions `zefix_sogc`;
+
+OK
+year=2014/month=09/day=01
+year=2014/month=09/day=02
+year=2014/month=09/day=03
+...
+year=2015/month=09/day=28
+year=2015/month=09/day=29
+year=2015/month=09/day=30
+```
+
 ### First query
 
 Now we have the table and at least one partition, we can start querying the table. First thing first,
@@ -117,7 +132,7 @@ cross product will be used.
 So, joining the two tables and filtering with a `RLIKE` will give something like:
 
 ```
-select company_name, email from zefix1 join zefix1_input where company_name RLIKE regexp;
+select company_name, email from zefix_sogc join zefix_notifier_input where company_name RLIKE regexp;
 ```
 
 ## Storing output
@@ -132,7 +147,7 @@ To store the data in the local filesystem, the previous query will be transforme
 INSERT OVERWRITE LOCAL DIRECTORY '/tmp/zefix_notifier' 
 ROW FORMAT DELIMITED 
 FIELDS TERMINATED BY ','
-select company_name, email from zefix1 join zefix1_input where company_name RLIKE regexp;
+select company_name, email from zefix_sogc join zefix_notifier_input where company_name RLIKE regexp;
 ```
 
 ## Sending emails
