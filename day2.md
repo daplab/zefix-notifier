@@ -41,6 +41,9 @@ VALUES
 ## Hive
 
 As the database schema has been changed, the Hive table will be changed too (well, re-created :))
+```
+Use test;
+```
 
 ```
 DROP TABLE IF EXISTS `zefix_notifier_input`;
@@ -90,7 +93,7 @@ The complete sqoop line to read from our table and import in the Hive table fina
 sqoop import --connect jdbc:mysql://10.10.10.3/test \
   --username test --table zefix_notifier_input \
   --target-dir /tmp/test-$(date +%s) \
-  --hive-import --hive-overwrite --hive-table zefix_notifier_input \
+  --hive-import --hive-overwrite --hive-table test.zefix_notifier_input \
   -m 1 --fields-terminated-by '\t'
 ```
 
