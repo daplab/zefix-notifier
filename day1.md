@@ -4,9 +4,9 @@ Zefix Notifier -- Day 1
 ## Data Ingestion
 
 The data is ingested daily and stored in HDFS. The files location is 
-`hdfs://daplab1/shared/zefix/sogc/${yyyy}/${mm}/${dd}`, i.e. partitioned by day.
+`hdfs://daplab2/shared/zefix/sogc/${yyyy}/${mm}/${dd}`, i.e. partitioned by day.
 
-The data is stored in AVRO format, and the AVRO schema is stored in `hdfs://daplab1/shared/zefix/sogc.avsc`
+The data is stored in AVRO format, and the AVRO schema is stored in `hdfs://daplab2/shared/zefix/sogc.avsc`
 
 ## Hive table
 
@@ -25,7 +25,7 @@ CREATE EXTERNAL TABLE zefix_sogc
   OUTPUTFORMAT
   'org.apache.hadoop.hive.ql.io.avro.AvroContainerOutputFormat'
   TBLPROPERTIES (
-    'avro.schema.url'='hdfs://daplab1/shared/zefix/sogc.avsc');
+    'avro.schema.url'='hdfs://daplab2/shared/zefix/sogc.avsc');
 ```
 
 ### Hive Partitions
@@ -34,7 +34,7 @@ Partitions are created on the table, for instance:
 
 ```
 ALTER TABLE zefix_sogc ADD IF NOT EXISTS PARTITION(year = 2015, month = 08, day = 28) 
-LOCATION 'hdfs://daplab1/shared/zefix/sogc/2015/08/28/';
+LOCATION 'hdfs://daplab2/shared/zefix/sogc/2015/08/28/';
 ```
 
 The complete hive SQL for creating the partitions is 
@@ -42,7 +42,7 @@ The complete hive SQL for creating the partitions is
 ```
 ALTER TABLE zefix_sogc ADD IF NOT EXISTS 
 PARTITION(year = ${hiveconf:year}, month = ${hiveconf:month}, day = ${hiveconf:day}) 
-LOCATION 'hdfs://daplab1/shared/zefix/sogc/${hiveconf:year}/${hiveconf:month}/${hiveconf:day}/';
+LOCATION 'hdfs://daplab2/shared/zefix/sogc/${hiveconf:year}/${hiveconf:month}/${hiveconf:day}/';
 ```
 
 This script will be called via a crontab after the data is ingested.
